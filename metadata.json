@@ -1,0 +1,6 @@
+{
+  "name": "La Kinh 24 Sơn Hướng & Huyền Không Phi Tinh",
+  "description": "Ứng dụng tự động vẽ La Kinh 24 Sơn Hướng xoay theo độ và lập tinh bàn Huyền Không Phi Tinh chuẩn xác với luận giải chi tiết",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Kinh 24 Sơn Hướng & Tinh Bàn Huyền Không Phi Tinh (Đơn Lập)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    input[type=range] { accent-color: #f59e0b; }
+  </style>
+</head>
+<body class="bg-stone-900 text-stone-100 min-h-screen pb-12 antialiased">
+
+  <!-- Header -->
+  <header class="border-b border-stone-800 bg-stone-950/80 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 font-black text-xl shadow">
+          ☯
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+            La Kinh 24 Sơn Hướng & Huyền Không Phi Tinh
+          </h1>
+          <p class="text-xs text-stone-400">
+            Chèn bản vẽ mặt bằng kiến trúc · La kinh trong suốt · Định vị hướng tự động qua 2 điểm · Tinh bàn Vận 9
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="btnExportOverlay" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow">
+          📷 Xuất Ảnh Bản Vẽ + La Bàn
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6">
+
+    <!-- Top Quick Control Bar -->
+    <div class="bg-stone-950 p-4 rounded-2xl border border-stone-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+      <!-- Degree input -->
+      <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+        <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+          <span>🧭</span> Hướng Nhà:
+        </span>
+        <div class="flex items-center gap-1">
+          <button id="btnDegMinus" class="w-7 h-7 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 font-bold text-xs flex items-center justify-center border border-stone-700">-1°</button>
+          <input id="inputDegree" type="number" min="0" max="360" value="180" class="w-16 bg-stone-900 border border-stone-700 rounded px-2 py-1 text-center font-mono text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-500">
+          <button id="btnDegPlus" class="w-7 h-7 rounded bg-stone-800 hover:bg-stone-700 text-stone-300 font-bold text-xs flex items-center justify-center border border-stone-700">+1°</button>
+        </div>
+        <input id="sliderDegree" type="range" min="0" max="360" value="180" class="w-36 sm:w-48 h-2 bg-stone-800 rounded-lg cursor-pointer accent-amber-500">
+      </div>
+
+      <!-- Mountain and Period selector -->
+      <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs text-stone-400">24 Sơn:</span>
+          <select id="selectMountain" class="bg-stone-900 border border-stone-700 rounded-lg px-2.5 py-1 text-xs font-bold text-amber-300 focus:outline-none focus:border-amber-500"></select>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs text-stone-400">Thời Vận:</span>
+          <select id="selectPeriod" class="bg-stone-900 border border-stone-700 rounded-lg px-2.5 py-1 text-xs font-bold text-stone-200 focus:outline-none focus:border-amber-500">
+            <option value="9" selected>Vận 9 (2024 - 2043) - Đương vận</option>
+            <option value="8">Vận 8 (2004 - 2023)</option>
+            <option value="7">Vận 7 (1984 - 2003)</option>
+            <option value="6">Vận 6 (1964 - 1983)</option>
+            <option value="5">Vận 5 (1944 - 1963)</option>
+            <option value="4">Vận 4 (1924 - 1943)</option>
+            <option value="3">Vận 3 (1904 - 1923)</option>
+            <option value="2">Vận 2 (1884 - 1903)</option>
+            <option value="1">Vận 1 (1864 - 1883)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar: Upload Image, Auto-Align 2 points, Set Center, Lock -->
+    <div class="bg-stone-950 p-3 sm:p-4 rounded-2xl border border-stone-800 shadow-xl flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <input type="file" id="fileUpload" accept="image/*" class="hidden">
+        <button id="btnChooseImage" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs transition-colors shadow">
+          📁 Chèn ảnh bản vẽ
+        </button>
+        <button id="btnSetCenter" class="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-stone-800 hover:bg-stone-700 text-stone-300 text-xs border border-stone-700 transition-colors">
+          🎯 Lập Cực (Tâm nhà)
+        </button>
+        <button id="btnAutoAlign" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-sky-950 hover:bg-sky-900 text-sky-300 font-bold text-xs border border-sky-500/50 transition-colors">
+          🧭 Định vị Hướng tự động (2 điểm)
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <div class="flex items-center bg-stone-900 p-1 rounded-lg border border-stone-800 text-xs">
+          <button id="btnModeLuopan" class="px-2 py-1 rounded text-stone-300 hover:text-white">La Kinh</button>
+          <button id="btnModeGrid" class="px-2 py-1 rounded text-stone-300 hover:text-white">Cửu Cung</button>
+          <button id="btnModeBoth" class="px-2 py-1 rounded bg-amber-500 text-stone-950 font-bold">Cả hai</button>
+        </div>
+        <button id="btnLock" class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 border border-stone-700 font-bold text-xs">
+          🔓 Mở khoá
+        </button>
+      </div>
+    </div>
+
+    <!-- Helper banner -->
+    <div id="helperBanner" class="hidden bg-sky-950/80 border border-sky-500/50 text-sky-200 text-xs px-4 py-2.5 rounded-xl flex items-center justify-between shadow-lg">
+      <span id="helperText"></span>
+      <button id="btnCloseHelper" class="text-sky-400 underline font-semibold ml-3">Đóng</button>
+    </div>
+
+    <!-- Canvas Container -->
+    <div class="relative w-full rounded-2xl overflow-hidden border border-stone-800 bg-stone-950 shadow-2xl flex flex-col items-center">
+      <!-- Status Badge -->
+      <div class="absolute top-3 left-3 right-3 z-10 pointer-events-none flex flex-wrap items-center justify-between gap-2 bg-stone-950/85 backdrop-blur-md px-4 py-2 rounded-xl border border-stone-800/90 text-xs shadow-lg">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></span>
+          <span id="badgeFacing" class="text-stone-200 font-bold">Hướng: 180° (Ngọ - Chính Nam)</span>
+          <span class="text-stone-600">|</span>
+          <span id="badgeSitting" class="text-stone-300 font-bold">Tọa: 0° (Tý - Chính Bắc)</span>
+        </div>
+        <div id="badgeFormation" class="text-amber-300 font-semibold">Vận 9 · Thẩm Thị Phi Tinh</div>
+      </div>
+
+      <!-- Canvas -->
+      <canvas id="overlayCanvas" class="block w-full h-[620px] touch-none select-none cursor-grab active:cursor-grabbing"></canvas>
+
+      <!-- Bottom Sliders (Opacity, Radius, Grid Size) -->
+      <div class="w-full bg-stone-900/95 border-t border-stone-800 p-3 sm:px-5 flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="text-stone-400">Độ trong suốt:</span>
+          <input id="sliderOpacity" type="range" min="0.15" max="0.95" step="0.05" value="0.65" class="w-24 h-1.5 bg-stone-700 rounded cursor-pointer accent-amber-500">
+          <span id="lblOpacity" class="text-amber-300 font-mono">65%</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-stone-400">Bán kính La Bàn:</span>
+          <input id="sliderRadius" type="range" min="180" max="550" step="10" value="320" class="w-24 h-1.5 bg-stone-700 rounded cursor-pointer accent-rose-500">
+          <span id="lblRadius" class="text-rose-300 font-mono">320px</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <span class="text-stone-400">Lưới Cửu Cung:</span>
+          <input id="sliderGridSize" type="range" min="240" max="680" step="10" value="460" class="w-24 h-1.5 bg-stone-700 rounded cursor-pointer accent-blue-500">
+          <span id="lblGridSize" class="text-blue-300 font-mono">460px</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formation & Palace Interpretation -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div id="formationCard" class="bg-stone-950 p-4 sm:p-5 rounded-2xl border border-stone-800 shadow-xl space-y-3"></div>
+      <div id="palaceCard" class="bg-stone-950 p-4 sm:p-5 rounded-2xl border border-stone-800 shadow-xl space-y-3"></div>
+    </div>
+
+  </main>
+
+  <script>
+    // 24 Sơn Hướng Database
+    const MOUNTAINS = [
+      { id: 0, name: 'Nhâm', hanzi: '壬', trigram: 'Khảm', palace: 1, dir: 'Chính Bắc', yuan: 'Địa', pol: '+', el: 'Thủy', center: 345, start: 337.5, end: 352.5 },
+      { id: 1, name: 'Tý', hanzi: '子', trigram: 'Khảm', palace: 1, dir: 'Chính Bắc', yuan: 'Thiên', pol: '-', el: 'Thủy', center: 0, start: 352.5, end: 7.5 },
+      { id: 2, name: 'Quý', hanzi: '癸', trigram: 'Khảm', palace: 1, dir: 'Chính Bắc', yuan: 'Nhân', pol: '-', el: 'Thủy', center: 15, start: 7.5, end: 22.5 },
+      { id: 3, name: 'Sửu', hanzi: '丑', trigram: 'Cấn', palace: 8, dir: 'Đông Bắc', yuan: 'Địa', pol: '-', el: 'Thổ', center: 30, start: 22.5, end: 37.5 },
+      { id: 4, name: 'Cấn', hanzi: '艮', trigram: 'Cấn', palace: 8, dir: 'Đông Bắc', yuan: 'Thiên', pol: '+', el: 'Thổ', center: 45, start: 37.5, end: 52.5 },
+      { id: 5, name: 'Dần', hanzi: '寅', trigram: 'Cấn', palace: 8, dir: 'Đông Bắc', yuan: 'Nhân', pol: '+', el: 'Mộc', center: 60, start: 52.5, end: 67.5 },
+      { id: 6, name: 'Giáp', hanzi: '甲', trigram: 'Chấn', palace: 3, dir: 'Chính Đông', yuan: 'Địa', pol: '+', el: 'Mộc', center: 75, start: 67.5, end: 82.5 },
+      { id: 7, name: 'Mão', hanzi: '卯', trigram: 'Chấn', palace: 3, dir: 'Chính Đông', yuan: 'Thiên', pol: '-', el: 'Mộc', center: 90, start: 82.5, end: 97.5 },
+      { id: 8, name: 'Ất', hanzi: '乙', trigram: 'Chấn', palace: 3, dir: 'Chính Đông', yuan: 'Nhân', pol: '-', el: 'Mộc', center: 105, start: 97.5, end: 112.5 },
+      { id: 9, name: 'Thìn', hanzi: '辰', trigram: 'Tốn', palace: 4, dir: 'Đông Nam', yuan: 'Địa', pol: '-', el: 'Thổ', center: 120, start: 112.5, end: 127.5 },
+      { id: 10, name: 'Tốn', hanzi: '巽', trigram: 'Tốn', palace: 4, dir: 'Đông Nam', yuan: 'Thiên', pol: '+', el: 'Mộc', center: 135, start: 127.5, end: 142.5 },
+      { id: 11, name: 'Tỵ', hanzi: '巳', trigram: 'Tốn', palace: 4, dir: 'Đông Nam', yuan: 'Nhân', pol: '+', el: 'Hỏa', center: 150, start: 142.5, end: 157.5 },
+      { id: 12, name: 'Bính', hanzi: '丙', trigram: 'Ly', palace: 9, dir: 'Chính Nam', yuan: 'Địa', pol: '+', el: 'Hỏa', center: 165, start: 157.5, end: 172.5 },
+      { id: 13, name: 'Ngọ', hanzi: '午', trigram: 'Ly', palace: 9, dir: 'Chính Nam', yuan: 'Thiên', pol: '-', el: 'Hỏa', center: 180, start: 172.5, end: 187.5 },
+      { id: 14, name: 'Đinh', hanzi: '丁', trigram: 'Ly', palace: 9, dir: 'Chính Nam', yuan: 'Nhân', pol: '-', el: 'Hỏa', center: 195, start: 187.5, end: 202.5 },
+      { id: 15, name: 'Mùi', hanzi: '未', trigram: 'Khôn', palace: 2, dir: 'Tây Nam', yuan: 'Địa', pol: '-', el: 'Thổ', center: 210, start: 202.5, end: 217.5 },
+      { id: 16, name: 'Khôn', hanzi: '坤', trigram: 'Khôn', palace: 2, dir: 'Tây Nam', yuan: 'Thiên', pol: '+', el: 'Thổ', center: 225, start: 217.5, end: 232.5 },
+      { id: 17, name: 'Thân', hanzi: '申', trigram: 'Khôn', palace: 2, dir: 'Tây Nam', yuan: 'Nhân', pol: '+', el: 'Kim', center: 240, start: 232.5, end: 247.5 },
+      { id: 18, name: 'Canh', hanzi: '庚', trigram: 'Đoài', palace: 7, dir: 'Chính Tây', yuan: 'Địa', pol: '+', el: 'Kim', center: 255, start: 247.5, end: 262.5 },
+      { id: 19, name: 'Dậu', hanzi: '酉', trigram: 'Đoài', palace: 7, dir: 'Chính Tây', yuan: 'Thiên', pol: '-', el: 'Kim', center: 270, start: 262.5, end: 277.5 },
+      { id: 20, name: 'Tân', hanzi: '辛', trigram: 'Đoài', palace: 7, dir: 'Chính Tây', yuan: 'Nhân', pol: '-', el: 'Kim', center: 285, start: 277.5, end: 292.5 },
+      { id: 21, name: 'Tuất', hanzi: '戌', trigram: 'Càn', palace: 6, dir: 'Tây Bắc', yuan: 'Địa', pol: '-', el: 'Thổ', center: 300, start: 292.5, end: 307.5 },
+      { id: 22, name: 'Càn', hanzi: '乾', trigram: 'Càn', palace: 6, dir: 'Tây Bắc', yuan: 'Thiên', pol: '+', el: 'Kim', center: 315, start: 307.5, end: 322.5 },
+      { id: 23, name: 'Hợi', hanzi: '亥', trigram: 'Càn', palace: 6, dir: 'Tây Bắc', yuan: 'Nhân', pol: '+', el: 'Thủy', center: 330, start: 322.5, end: 337.5 },
+    ];
+
+    const PALACES = {
+      1: { name: 'Khảm (Chính Bắc)', short: 'Bắc', symbol: '☵', element: 'Thủy' },
+      2: { name: 'Khôn (Tây Nam)', short: 'Tây Nam', symbol: '☷', element: 'Thổ' },
+      3: { name: 'Chấn (Chính Đông)', short: 'Đông', symbol: '☳', element: 'Mộc' },
+      4: { name: 'Tốn (Đông Nam)', short: 'Đông Nam', symbol: '☴', element: 'Mộc' },
+      5: { name: 'Trung Cung (Thiên Tâm)', short: 'Trung Cung', symbol: '☯', element: 'Thổ' },
+      6: { name: 'Càn (Tây Bắc)', short: 'Tây Bắc', symbol: '☰', element: 'Kim' },
+      7: { name: 'Đoài (Chính Tây)', short: 'Tây', symbol: '☱', element: 'Kim' },
+      8: { name: 'Cấn (Đông Bắc)', short: 'Đông Bắc', symbol: '☶', element: 'Thổ' },
+      9: { name: 'Ly (Chính Nam)', short: 'Nam', symbol: '☲', element: 'Hỏa' },
+    };
+
+    const FLIGHT_PATH = [5, 6, 7, 8, 9, 1, 2, 3, 4];
+
+    // State Variables
+    let currentDegree = 180;
+    let currentPeriod = 9;
+    let isLocked = false;
+    let viewOverlay = 'both'; // 'luopan', 'nine_palace', 'both'
+    let interactionMode = 'pan'; // 'pan', 'set_center', 'align_direction'
+    let alignPoint1 = null;
+
+    let centerPoint = { x: 500, y: 310 };
+    let panOffset = { x: 0, y: 0 };
+    let zoomScale = 1;
+    let luopanRadius = 320;
+    let gridWidth = 460;
+    let opacity = 0.65;
+
+    let floorPlanImg = null;
+
+    function normDeg(d) {
+      let deg = d % 360;
+      if (deg < 0) deg += 360;
+      return deg;
+    }
+
+    function getMountain(deg) {
+      const d = normDeg(deg);
+      for (const m of MOUNTAINS) {
+        if (m.name === 'Tý') {
+          if (d >= 352.5 || d < 7.5) return m;
+        } else if (d >= m.start && d < m.end) {
+          return m;
+        }
+      }
+      return MOUNTAINS[1];
+    }
+
+    function flyStars(centerStar, polarity) {
+      const res = {};
+      FLIGHT_PATH.forEach((pNum, step) => {
+        if (step === 0) res[pNum] = centerStar;
+        else {
+          if (polarity === '+') res[pNum] = ((centerStar - 1 + step) % 9) + 1;
+          else res[pNum] = (((centerStar - 1 - step) % 9) + 9) % 9 + 1;
+        }
+      });
+      return res;
+    }
+
+    function getPolarity(star, yuan, mObj) {
+      if (star !== 5) {
+        const m = MOUNTAINS.find(x => x.palace === star && x.yuan === yuan);
+        if (m) return m.pol;
+      }
+      return mObj ? mObj.pol : (yuan === 'Địa' ? '-' : '+');
+    }
+
+    function calculateChart() {
+      const facingM = getMountain(currentDegree);
+      const sittingDeg = normDeg(currentDegree + 180);
+      const sittingM = getMountain(sittingDeg);
+
+      const periodStars = flyStars(currentPeriod, '+');
+      const baseSittingStar = periodStars[sittingM.palace];
+      const sittingPol = getPolarity(baseSittingStar, sittingM.yuan, sittingM);
+      const sittingStars = flyStars(baseSittingStar, sittingPol);
+
+      const baseFacingStar = periodStars[facingM.palace];
+      const facingPol = getPolarity(baseFacingStar, facingM.yuan, facingM);
+      const facingStars = flyStars(baseFacingStar, facingPol);
+
+      const palaces = {};
+      for (let p = 1; p <= 9; p++) {
+        palaces[p] = {
+          palace: p,
+          meta: PALACES[p],
+          pStar: periodStars[p],
+          sStar: sittingStars[p],
+          sPol: sittingPol,
+          fStar: facingStars[p],
+          fPol: facingPol,
+          isSitting: p === sittingM.palace,
+          isFacing: p === facingM.palace,
+          isCenter: p === 5,
+        };
+      }
+
+      let formation = 'Phối Hợp Đa Cung';
+      let formationRating = 'Trung Hòa';
+      let badgeClass = 'bg-stone-700 text-stone-200';
+      let formationDesc = 'Các sao phân bổ đều khắp các cung vị.';
+
+      const sitP = palaces[sittingM.palace];
+      const facP = palaces[facingM.palace];
+
+      if (sitP.sStar === currentPeriod && facP.fStar === currentPeriod) {
+        formation = 'Vượng Sơn Vượng Hướng (Đáo Sơn Đáo Hướng)';
+        formationRating = 'Thượng Cát (Đinh Tài Lưỡng Đắc)';
+        badgeClass = 'bg-emerald-600 text-white';
+        formationDesc = 'Đại cát lợi! Tọa nhà đón vượng nhân đinh sức khỏe, trước nhà đón trọn đại tài lộc.';
+      } else if (facP.sStar === currentPeriod && facP.fStar === currentPeriod) {
+        formation = 'Song Tinh Đáo Hướng';
+        formationRating = 'Vượng Tài Thoái Đinh';
+        badgeClass = 'bg-blue-600 text-white';
+        formationDesc = 'Cực vượng tài lộc kinh doanh, tiền của đổ về nhanh chóng.';
+      } else if (sitP.sStar === currentPeriod && sitP.fStar === currentPeriod) {
+        formation = 'Song Tinh Đáo Tọa';
+        formationRating = 'Vượng Đinh Thoái Tài';
+        badgeClass = 'bg-indigo-600 text-white';
+        formationDesc = 'Gia quyến hòa thuận, con cái hiếu thảo hiển đạt.';
+      } else if (facP.sStar === currentPeriod && sitP.fStar === currentPeriod) {
+        formation = 'Thượng Sơn Hạ Thủy';
+        formationRating = 'Hung (Cần Nghịch Bố Cục)';
+        badgeClass = 'bg-amber-600 text-white';
+        formationDesc = 'Nghịch cục: Sao hướng lên núi, sao sơn xuống nước. Cần hóa giải bằng đá cảnh hoặc phong thủy luân.';
+      }
+
+      return { facingM, sittingM, sittingDeg, palaces, formation, formationRating, badgeClass, formationDesc };
+    }
+
+    // Draw Overlay on Canvas
+    function drawCanvas() {
+      const canvas = document.getElementById('overlayCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 2;
+      const width = rect.width || 900;
+      const height = rect.height || 620;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Draw floor plan image
+      if (floorPlanImg) {
+        const imgW = floorPlanImg.width;
+        const imgH = floorPlanImg.height;
+        const scaleFit = Math.min((width * 0.95) / imgW, (height * 0.95) / imgH);
+        const drawW = imgW * scaleFit * zoomScale;
+        const drawH = imgH * scaleFit * zoomScale;
+        const drawX = (width - drawW) / 2 + panOffset.x;
+        const drawY = (height - drawH) / 2 + panOffset.y;
+        ctx.drawImage(floorPlanImg, drawX, drawY, drawW, drawH);
+      } else {
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      const cx = centerPoint.x;
+      const cy = centerPoint.y;
+      const R = luopanRadius;
+      const rotRad = ((-currentDegree) * Math.PI) / 180;
+      const chart = calculateChart();
+
+      // 2. Draw Transparent 24 Mountains Luopan
+      if (viewOverlay === 'both' || viewOverlay === 'luopan') {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rotRad);
+
+        // Boundary circle
+        ctx.beginPath();
+        ctx.arc(0, 0, R, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(15, 23, 42, ${Math.min(opacity + 0.2, 0.95)})`;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        const rDegRing = R;
+        const rMountainRing = R - 28;
+        const rInner = 32;
+
+        // Ticks
+        for (let d = 0; d < 360; d += 5) {
+          const rad = ((d - 90) * Math.PI) / 180;
+          const isMajor = d % 10 === 0;
+          const tickL = isMajor ? 10 : 5;
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(rad) * rDegRing, Math.sin(rad) * rDegRing);
+          ctx.lineTo(Math.cos(rad) * (rDegRing - tickL), Math.sin(rad) * (rDegRing - tickL));
+          ctx.strokeStyle = isMajor ? 'rgba(0,0,0,0.85)' : 'rgba(71,85,105,0.7)';
+          ctx.lineWidth = isMajor ? 1.5 : 0.8;
+          ctx.stroke();
+
+          if (isMajor) {
+            ctx.save();
+            ctx.translate(Math.cos(rad) * (rDegRing - 18), Math.sin(rad) * (rDegRing - 18));
+            ctx.rotate(rad + Math.PI / 2);
+            ctx.font = 'bold 8.5px sans-serif';
+            ctx.fillStyle = d === 0 ? '#dc2626' : '#1e293b';
+            ctx.textAlign = 'center';
+            ctx.fillText(d, 0, 0);
+            ctx.restore();
+          }
+        }
+
+        // 24 Mountain Sectors
+        const tuChanh = ['MÃO', 'NGỌ', 'DẬU', 'TÝ', 'Mão', 'Ngọ', 'Dậu', 'Tý'];
+        MOUNTAINS.forEach((m, idx) => {
+          const sRad = ((m.start - 90) * Math.PI) / 180;
+          const eRad = ((m.end - 90) * Math.PI) / 180;
+          const mRad = ((m.center - 90) * Math.PI) / 180;
+
+          ctx.beginPath();
+          ctx.arc(0, 0, rMountainRing, sRad, eRad);
+          ctx.arc(0, 0, rInner, eRad, sRad, true);
+          ctx.closePath();
+
+          const isTC = tuChanh.includes(m.name);
+          if (isTC) ctx.fillStyle = `rgba(244, 63, 94, ${opacity * 0.28})`;
+          else if (idx % 2 === 0) ctx.fillStyle = `rgba(224, 231, 255, ${opacity * 0.22})`;
+          else ctx.fillStyle = `rgba(248, 250, 252, ${opacity * 0.12})`;
+          ctx.fill();
+
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(sRad) * rInner, Math.sin(sRad) * rInner);
+          ctx.lineTo(Math.cos(sRad) * rDegRing, Math.sin(sRad) * rDegRing);
+          ctx.strokeStyle = `rgba(15, 23, 42, ${Math.min(opacity + 0.15, 0.85)})`;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+
+          // Mountain text
+          ctx.save();
+          const tr = rMountainRing - 20;
+          ctx.translate(Math.cos(mRad) * tr, Math.sin(mRad) * tr);
+          ctx.rotate(mRad + Math.PI / 2);
+
+          if (isTC) {
+            ctx.fillStyle = '#e11d48';
+            ctx.beginPath();
+            ctx.roundRect(-18, -10, 36, 18, 3);
+            ctx.fill();
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillStyle = '#ffffff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(m.name.toUpperCase(), 0, -1);
+          } else {
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillStyle = '#0f172a';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(m.name.toUpperCase(), 0, 0);
+          }
+          ctx.restore();
+        });
+
+        // Center circle
+        ctx.beginPath();
+        ctx.arc(0, 0, rInner, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255, 255, 255, ${Math.min(opacity + 0.3, 0.95)})`;
+        ctx.fill();
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.restore();
+      }
+
+      // 3. Draw 9-Palace Matrix (Tự động xoay theo Hướng nhà)
+      if (viewOverlay === 'both' || viewOverlay === 'nine_palace') {
+        ctx.save();
+        ctx.translate(cx, cy);
+
+        // Rotate grid with house facing direction
+        const rotRad = (currentDegree * Math.PI) / 180;
+        ctx.rotate(rotRad);
+
+        const gSize = gridWidth;
+        const cellSize = gSize / 3;
+        const startX = -gSize / 2;
+        const startY = -gSize / 2;
+
+        ctx.strokeStyle = '#2563eb';
+        ctx.lineWidth = 3.5;
+        ctx.strokeRect(startX, startY, gSize, gSize);
+
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(startX + cellSize, startY); ctx.lineTo(startX + cellSize, startY + gSize);
+        ctx.moveTo(startX + cellSize * 2, startY); ctx.lineTo(startX + cellSize * 2, startY + gSize);
+        ctx.moveTo(startX, startY + cellSize); ctx.lineTo(startX + gSize, startY + cellSize);
+        ctx.moveTo(startX, startY + cellSize * 2); ctx.lineTo(startX + gSize, startY + cellSize * 2);
+        ctx.stroke();
+
+        // 3x3 layout with Facing Palace at Top Center (Mặt tiền ở trên)
+        const ring = [1, 8, 3, 4, 9, 2, 7, 6];
+        const fIdx = ring.indexOf(chart.facingM.palace);
+        const getP = (off) => ring[(fIdx + off + 8) % 8];
+        const grid3x3 = [
+          [getP(7), getP(0), getP(1)],
+          [getP(6), 5, getP(2)],
+          [getP(5), getP(4), getP(3)],
+        ];
+
+        grid3x3.forEach((row, rIdx) => {
+          row.forEach((pNum, cIdx) => {
+            const p = chart.palaces[pNum];
+            const cellX = startX + cIdx * cellSize;
+            const cellY = startY + rIdx * cellSize;
+            const cellCenterX = cellX + cellSize / 2;
+            const cellCenterY = cellY + cellSize / 2;
+
+            ctx.fillStyle = p.isFacing ? 'rgba(239, 68, 68, 0.16)' : p.isSitting ? 'rgba(37, 99, 235, 0.16)' : 'rgba(255, 255, 255, 0.08)';
+            ctx.fillRect(cellX, cellY, cellSize, cellSize);
+
+            ctx.save();
+            ctx.translate(cellCenterX, cellCenterY);
+            ctx.rotate(-rotRad); // Keep numbers and text upright and legible
+
+            // Mountain Star (Top Left - Red)
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${p.sStar}${p.sPol}`, -cellSize * 0.28, -cellSize * 0.26);
+
+            // Facing Star (Top Right - Blue)
+            const fX = cellSize * 0.28;
+            const fY = -cellSize * 0.26;
+            ctx.beginPath();
+            ctx.arc(fX, fY, 13, 0, Math.PI * 2);
+            ctx.strokeStyle = '#2563eb';
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
+            ctx.fillStyle = '#1d4ed8';
+            ctx.font = 'bold 18px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${p.fStar}${p.fPol}`, fX, fY);
+
+            // Period Star (Center)
+            const pbW = Math.min(cellSize * 0.38, 44);
+            const pbH = Math.min(cellSize * 0.32, 34);
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.beginPath();
+            ctx.roundRect(-pbW / 2, -pbH / 2, pbW, pbH, 4);
+            ctx.fill();
+            ctx.strokeStyle = '#2563eb';
+            ctx.lineWidth = 1.6;
+            ctx.stroke();
+
+            ctx.fillStyle = '#0f172a';
+            ctx.font = '900 20px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(`${p.pStar}`, 0, 0);
+
+            // Direction Name & Trigram
+            ctx.fillStyle = p.isFacing ? '#ef4444' : p.isSitting ? '#3b82f6' : '#1e293b';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const tag = p.isFacing ? ' [HƯỚNG]' : p.isSitting ? ' [TỌA]' : '';
+            ctx.fillText(`${p.meta.short}${tag}`, 0, cellSize * 0.30);
+
+            ctx.restore();
+          });
+        });
+
+        // Direction Arrow at top edge
+        ctx.fillStyle = '#ef4444';
+        ctx.strokeStyle = '#b91c1c';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, startY - 22); ctx.lineTo(-12, startY - 2); ctx.lineTo(12, startY - 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ef4444';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(`HƯỚNG NHÀ (${currentDegree}°)`, 0, startY - 24);
+
+        ctx.restore();
+      }
+
+      // Point 1 indicator if in auto alignment mode
+      if (interactionMode === 'align_direction' && alignPoint1) {
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(alignPoint1.x, alignPoint1.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      // Center Pin
+      ctx.fillStyle = '#dc2626';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function updateAll() {
+      const data = calculateChart();
+
+      // UI inputs
+      document.getElementById('inputDegree').value = currentDegree;
+      document.getElementById('sliderDegree').value = currentDegree;
+      document.getElementById('selectMountain').value = data.facingM.name;
+      document.getElementById('selectPeriod').value = currentPeriod;
+
+      document.getElementById('badgeFacing').textContent = `Hướng: ${currentDegree}° (${data.facingM.name} - ${data.facingM.dir})`;
+      document.getElementById('badgeSitting').textContent = `Tọa: ${data.sittingDeg}° (${data.sittingM.name} - ${data.sittingM.dir})`;
+      document.getElementById('badgeFormation').textContent = `Vận ${currentPeriod} · ${data.formation}`;
+
+      // Formation Card
+      document.getElementById('formationCard').innerHTML = `
+        <h3 class="text-sm font-bold text-amber-300 flex items-center justify-between">
+          <span>🏆 Cách Cục: ${data.formation}</span>
+          <span class="text-xs px-2 py-0.5 rounded ${data.badgeClass}">${data.formationRating}</span>
+        </h3>
+        <p class="text-xs text-stone-300 leading-relaxed">${data.formationDesc}</p>
+      `;
+
+      // Active Palace Info
+      const selP = data.palaces[data.facingM.palace];
+      document.getElementById('palaceCard').innerHTML = `
+        <h3 class="text-sm font-bold text-amber-300">
+          🔍 Cung Hướng Nhà: ${selP.meta.name} [Sơn ${selP.sStar} - Hướng ${selP.fStar}]
+        </h3>
+        <p class="text-xs text-stone-300 leading-relaxed">
+          Vận tinh ${selP.pStar} · Sơn tinh ${selP.sStar} chủ về sức khỏe nhân đinh; Hướng tinh ${selP.fStar} chủ về tiền tài, cơ hội làm ăn buôn bán.
+        </p>
+      `;
+
+      drawCanvas();
+    }
+
+    // Populate Mountains dropdown
+    const selM = document.getElementById('selectMountain');
+    MOUNTAINS.forEach(m => {
+      const opt = document.createElement('option');
+      opt.value = m.name;
+      opt.textContent = `${m.name} (${m.hanzi}) · ${m.center}° [${m.trigram}]`;
+      selM.appendChild(opt);
+    });
+
+    // Event listeners
+    document.getElementById('inputDegree').addEventListener('input', e => {
+      currentDegree = normDeg(parseFloat(e.target.value) || 0);
+      updateAll();
+    });
+    document.getElementById('sliderDegree').addEventListener('input', e => {
+      currentDegree = normDeg(parseFloat(e.target.value) || 0);
+      updateAll();
+    });
+    document.getElementById('btnDegMinus').addEventListener('click', () => {
+      currentDegree = normDeg(currentDegree - 1);
+      updateAll();
+    });
+    document.getElementById('btnDegPlus').addEventListener('click', () => {
+      currentDegree = normDeg(currentDegree + 1);
+      updateAll();
+    });
+    selM.addEventListener('change', e => {
+      const found = MOUNTAINS.find(m => m.name === e.target.value);
+      if (found) { currentDegree = found.center; updateAll(); }
+    });
+    document.getElementById('selectPeriod').addEventListener('change', e => {
+      currentPeriod = parseInt(e.target.value) || 9;
+      updateAll();
+    });
+
+    // Sliders
+    document.getElementById('sliderOpacity').addEventListener('input', e => {
+      opacity = parseFloat(e.target.value);
+      document.getElementById('lblOpacity').textContent = Math.round(opacity * 100) + '%';
+      drawCanvas();
+    });
+    document.getElementById('sliderRadius').addEventListener('input', e => {
+      luopanRadius = parseInt(e.target.value);
+      document.getElementById('lblRadius').textContent = luopanRadius + 'px';
+      drawCanvas();
+    });
+    document.getElementById('sliderGridSize').addEventListener('input', e => {
+      gridWidth = parseInt(e.target.value);
+      document.getElementById('lblGridSize').textContent = gridWidth + 'px';
+      drawCanvas();
+    });
+
+    // View modes
+    document.getElementById('btnModeLuopan').addEventListener('click', () => {
+      viewOverlay = 'luopan';
+      updateModeButtons();
+      drawCanvas();
+    });
+    document.getElementById('btnModeGrid').addEventListener('click', () => {
+      viewOverlay = 'nine_palace';
+      updateModeButtons();
+      drawCanvas();
+    });
+    document.getElementById('btnModeBoth').addEventListener('click', () => {
+      viewOverlay = 'both';
+      updateModeButtons();
+      drawCanvas();
+    });
+
+    function updateModeButtons() {
+      document.getElementById('btnModeLuopan').className = viewOverlay === 'luopan' ? 'px-2 py-1 rounded bg-amber-500 text-stone-950 font-bold' : 'px-2 py-1 rounded text-stone-300 hover:text-white';
+      document.getElementById('btnModeGrid').className = viewOverlay === 'nine_palace' ? 'px-2 py-1 rounded bg-amber-500 text-stone-950 font-bold' : 'px-2 py-1 rounded text-stone-300 hover:text-white';
+      document.getElementById('btnModeBoth').className = viewOverlay === 'both' ? 'px-2 py-1 rounded bg-amber-500 text-stone-950 font-bold' : 'px-2 py-1 rounded text-stone-300 hover:text-white';
+    }
+
+    // Lock toggle
+    document.getElementById('btnLock').addEventListener('click', () => {
+      isLocked = !isLocked;
+      document.getElementById('btnLock').textContent = isLocked ? '🔒 Đã khoá' : '🔓 Mở khoá';
+      document.getElementById('btnLock').className = isLocked ? 'flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-600 text-white border border-blue-500 font-bold text-xs' : 'flex items-center gap-1 px-3 py-1.5 rounded-lg bg-stone-800 text-stone-300 border border-stone-700 font-bold text-xs';
+    });
+
+    // Helper banner
+    function showHelper(msg) {
+      document.getElementById('helperText').textContent = msg;
+      document.getElementById('helperBanner').classList.remove('hidden');
+    }
+    document.getElementById('btnCloseHelper').addEventListener('click', () => {
+      document.getElementById('helperBanner').classList.add('hidden');
+    });
+
+    // Set center & Auto align
+    document.getElementById('btnSetCenter').addEventListener('click', () => {
+      interactionMode = 'set_center';
+      showHelper('Nhấp chuột vào điểm Tâm Nhà (Trung Cung) trên bản vẽ để đặt tâm La Kinh!');
+    });
+
+    document.getElementById('btnAutoAlign').addEventListener('click', () => {
+      interactionMode = 'align_direction';
+      alignPoint1 = null;
+      showHelper('ĐỊNH VỊ TỰ ĐỘNG: Nhấp Điểm 1 (Tâm nhà hoặc Cửa chính), sau đó nhấp Điểm 2 (hướng nhìn ra trước nhà) để tự tính độ số!');
+    });
+
+    // Canvas Pointer handling
+    const cvs = document.getElementById('overlayCanvas');
+    let isDragging = false;
+    let dragStart = { x: 0, y: 0 };
+
+    cvs.addEventListener('pointerdown', e => {
+      const rect = cvs.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (interactionMode === 'set_center') {
+        centerPoint = { x, y };
+        interactionMode = 'pan';
+        showHelper('Đã đặt Tâm Nhà thành công!');
+        drawCanvas();
+        return;
+      }
+
+      if (interactionMode === 'align_direction') {
+        if (!alignPoint1) {
+          alignPoint1 = { x, y };
+          showHelper('Đã chọn Điểm 1. Bây giờ hãy nhấp Điểm 2 (hướng nhìn ra trước nhà) để tự động định vị độ số!');
+          drawCanvas();
+        } else {
+          const dx = x - alignPoint1.x;
+          const dy = y - alignPoint1.y;
+          const angleRad = Math.atan2(dy, dx);
+          let deg = Math.round((angleRad * 180) / Math.PI + 90);
+          if (deg < 0) deg += 360;
+          deg = deg % 360;
+
+          currentDegree = deg;
+          alignPoint1 = null;
+          interactionMode = 'pan';
+          showHelper(`Đã tự động căn hướng: ${deg}° thành công!`);
+          updateAll();
+        }
+        return;
+      }
+
+      if (!isLocked) {
+        isDragging = true;
+        dragStart = { x: e.clientX, y: e.clientY };
+      }
+    });
+
+    window.addEventListener('pointermove', e => {
+      if (!isDragging || isLocked || interactionMode !== 'pan') return;
+      const dx = e.clientX - dragStart.x;
+      const dy = e.clientY - dragStart.y;
+      dragStart = { x: e.clientX, y: e.clientY };
+      centerPoint.x += dx;
+      centerPoint.y += dy;
+      panOffset.x += dx;
+      panOffset.y += dy;
+      drawCanvas();
+    });
+
+    window.addEventListener('pointerup', () => { isDragging = false; });
+
+    // File Upload
+    document.getElementById('btnChooseImage').addEventListener('click', () => {
+      document.getElementById('fileUpload').click();
+    });
+
+    document.getElementById('fileUpload').addEventListener('change', e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.src = ev.target.result;
+        img.onload = () => {
+          floorPlanImg = img;
+          panOffset = { x: 0, y: 0 };
+          centerPoint = { x: cvs.clientWidth / 2, y: cvs.clientHeight / 2 };
+          drawCanvas();
+        };
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Export composite image
+    document.getElementById('btnExportOverlay').addEventListener('click', () => {
+      const url = cvs.toDataURL('image/png');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `MatBang_PhongThuy_${currentDegree}do.png`;
+      a.click();
+    });
+
+    // Init
+    updateAll();
+  </script>
+</body>
+</html>
